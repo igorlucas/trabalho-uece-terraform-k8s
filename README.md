@@ -5,7 +5,7 @@ Deve ser configurado na máquina as seguites ferramentas
 - kubectl
 - terraform
 
-### 1 Etapa:
+### 1 Etapa (Provisionar um cluster kubernetes):
 Após clonar esse repositório, primeiramente deve ser realizado o provisionamento do cluster AKS.
 Para isso, na pasta do do repositório, entre na pasta terraform-aks-cluster.
 ```
@@ -68,4 +68,37 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 Feito isso, você receberá um token dentro do terminal. Selecione "Token" na interface do painel UI e copie e cole todo o token que você recebe no tela de autenticação do painel para entrar. 
 Se nada der errado você estará conectado ao painel para o seu cluster Kubernetes.
 
-### 2 Etapa:
+### 2 Etapa (Publicando uma aplicação no cluster kubernetes):
+Agora entre na pasta terraform-app. 
+Nessa parte será provisionado o "deployment" e o "service" do wordpress, juntamente com seus outros recursos necessários.
+
+Configurando as variáveis do banco de dados.
+Na raiz da pasta crie o arquivo terraform.tfvars e as seguintes variáveis, preenchendo com os valores que você desejar:
+```
+# terraform.tfvars
+MYSQL_ROOT_PASSWORD = ""
+MYSQL_DATABASE = ""
+MYSQL_USER = ""
+MYSQL_PASSWORD=""
+```
+
+Inicie o terraform:
+```
+terraform init
+terraform apply
+```
+Uma vez que o provisionamento esteja concluído, verifique se o serviço está em execução.
+```
+kubectl get services
+```
+
+
+Será logado os serviços em execução, precisaremos do serviço do tipo NodePort.
+![image](https://user-images.githubusercontent.com/11475845/113636376-cb722800-9648-11eb-8af9-db868dca04b4.png)
+
+Você poderá acessar a instância da sua aplicação navegando até o NodePort em. http://localhost:30201/
+
+### Fontes
+Links que me ajudaram a desenvolver esse trabalho:
+- [Provisionando um cluster kubernetes com o terraform](https://learn.hashicorp.com/tutorials/terraform/aks?in=terraform/kubernetes)
+- [Publicando o nginx em um cluster kubernetes com o terraform](https://learn.hashicorp.com/tutorials/terraform/kubernetes-provider)
